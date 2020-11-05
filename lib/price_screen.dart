@@ -9,7 +9,7 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  String selectedCurrency = 'AUD';
 
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
@@ -28,6 +28,7 @@ class _PriceScreenState extends State<PriceScreen> {
         onChanged: (value) {
           setState(() {
             selectedCurrency = value;
+            getData();
           });
         });
   }
@@ -44,19 +45,20 @@ class _PriceScreenState extends State<PriceScreen> {
       onSelectedItemChanged: (selectedIndex) {
         setState(() {
           selectedCurrency = currenciesList[selectedIndex];
+          getData();
         });
       },
       children: pickerItems,
     );
   }
 
-  String bitCoinValueInUSD = '?';
+  String bitCoinValue = '?';
 
   void getData() async {
     try {
-      double data = await CoinData().getCoinData();
+      var data = await CoinData().getCoinData(selectedCurrency);
       setState(() {
-        bitCoinValueInUSD = data.toStringAsFixed(0);
+        bitCoinValue = data.toStringAsFixed(0);
       });
     } catch (e) {
       print(e);
@@ -67,7 +69,7 @@ class _PriceScreenState extends State<PriceScreen> {
   void initState() {
     super.initState();
     // TODO: Uncomment the below method only when you want to fetch http data; Reason to keep inactive as the API request is free account and has 100 call limit
-    // getData();
+    getData();
   }
 
   @override
@@ -91,7 +93,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = $bitCoinValueInUSD USD',
+                  '1 BTC = $bitCoinValue $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
