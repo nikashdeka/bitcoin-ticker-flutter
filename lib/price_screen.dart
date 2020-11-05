@@ -10,49 +10,47 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
 
-  List<DropdownMenuItem> getDropdownItems() {
-    //
+  DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
 
-    // // The below code in for-loop method
-    // for (var i = 0; i < currenciesList.length; i++) {
-    //   String currency = currenciesList[i];
-    //   var newItem = DropdownMenuItem(
-    //     child: Text('$currency'),
-    //     value: currency,
-    //   );
-
-    //   // Everytime we create a new item we add it to the dropdownItems list
-    //   dropdownItems.add(newItem);
-    // }
-
-    // for-in-loop method (it is a bit short)
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem(
-        child: Text('$currency'),
+        child: Text(currency),
         value: currency,
       );
       dropdownItems.add(newItem);
     }
 
-    // return the dropdownItems
-    return dropdownItems;
+    return DropdownButton<String>(
+        value: selectedCurrency,
+        items: dropdownItems,
+        onChanged: (value) {
+          setState(() {
+            selectedCurrency = value;
+          });
+        });
   }
 
-  //
-  List<Text> getPickerItems() {
-    //
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
+
     for (String currency in currenciesList) {
       pickerItems.add(Text(currency));
     }
-    return pickerItems;
+
+    return CupertinoPicker(
+      itemExtent: 40.0,
+      onSelectedItemChanged: (selectedIndex) {
+        setState(() {
+          selectedCurrency = currenciesList[selectedIndex];
+        });
+      },
+      children: pickerItems,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // getDropdownItems();
-    getPickerItems();
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -87,28 +85,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              itemExtent: 40.0,
-              onSelectedItemChanged: (selectedIndex) {
-                setState(() {
-                  selectedCurrency = currenciesList[selectedIndex];
-                });
-              },
-              children: getPickerItems(),
-            ),
+            child: iOSPicker(),
           ),
         ],
       ),
     );
   }
 }
-
-// Android specific DropdownButton code
-// DropdownButton(
-//   value: selectedCurrency,
-//   items: getDropdownItems(),
-//   onChanged: (value) {
-//     setState(() {
-//       selectedCurrency = value;
-//     });
-//   }),
