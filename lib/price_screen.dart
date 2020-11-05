@@ -1,4 +1,6 @@
+import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -7,8 +9,50 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
+
+  List<DropdownMenuItem> getDropdownItems() {
+    //
+    List<DropdownMenuItem<String>> dropdownItems = [];
+
+    // // The below code in for-loop method
+    // for (var i = 0; i < currenciesList.length; i++) {
+    //   String currency = currenciesList[i];
+    //   var newItem = DropdownMenuItem(
+    //     child: Text('$currency'),
+    //     value: currency,
+    //   );
+
+    //   // Everytime we create a new item we add it to the dropdownItems list
+    //   dropdownItems.add(newItem);
+    // }
+
+    // for-in-loop method (it is a bit short)
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        child: Text('$currency'),
+        value: currency,
+      );
+      dropdownItems.add(newItem);
+    }
+
+    // return the dropdownItems
+    return dropdownItems;
+  }
+
+  //
+  List<Text> getPickerItems() {
+    //
+    List<Text> pickerItems = [];
+    for (String currency in currenciesList) {
+      pickerItems.add(Text(currency));
+    }
+    return pickerItems;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // getDropdownItems();
+    getPickerItems();
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -43,30 +87,28 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton(
-                value: selectedCurrency,
-                items: [
-                  DropdownMenuItem(
-                    child: Text('USD'),
-                    value: 'USD',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('EUR'),
-                    value: 'EUR',
-                  ),
-                  DropdownMenuItem(
-                    child: Text('GBP'),
-                    value: 'GBP',
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    selectedCurrency = value;
-                  });
-                }),
+            child: CupertinoPicker(
+              itemExtent: 40.0,
+              onSelectedItemChanged: (selectedIndex) {
+                setState(() {
+                  selectedCurrency = currenciesList[selectedIndex];
+                });
+              },
+              children: getPickerItems(),
+            ),
           ),
         ],
       ),
     );
   }
 }
+
+// Android specific DropdownButton code
+// DropdownButton(
+//   value: selectedCurrency,
+//   items: getDropdownItems(),
+//   onChanged: (value) {
+//     setState(() {
+//       selectedCurrency = value;
+//     });
+//   }),
